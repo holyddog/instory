@@ -1,0 +1,33 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:mongo="http://www.springframework.org/schema/data/mongo"
+	xsi:schemaLocation="
+		http://www.springframework.org/schema/data/mongo
+		http://www.springframework.org/schema/data/mongo/spring-mongo.xsd	  
+		http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans-4.0.xsd">
+
+	<bean id="propertyConfigurer"
+		class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+
+		<property name="location">
+			<value>/WEB-INF/mongo.properties</value>
+		</property>
+	</bean>
+	
+	<mongo:mongo host="${mongo.host}" port="${mongo.port}" />
+
+	<mongo:db-factory dbname="${mongo.db}" mongo-ref="mongo" />
+
+	<mongo:mapping-converter />
+
+	<bean id="classConverter" class="me.instory.common.ConverterFactory">
+		<property name="mongoConverter" ref="mappingConverter" />
+	</bean>
+
+	<bean id="mongoTemplate" class="org.springframework.data.mongodb.core.MongoTemplate">
+		<constructor-arg name="mongoDbFactory" ref="mongoDbFactory" />
+		<constructor-arg name="mongoConverter" ref="classConverter" />
+	</bean>
+
+</beans>
